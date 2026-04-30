@@ -1,0 +1,67 @@
+UGA Parking Spot Tracker -- Index Performance Report
+=====================================================
+
+Both indexes live on spot_report, the high-volume table (1000+ rows).
+Benchmarks below were measured after seeding the database with the full
+dataset from data.sql using MySQL's built-in query profiling:
+
+    SET profiling = 1;
+    <run query>
+    SHOW PROFILES;
+
+
+---------------------------------------------------------------------
+INDEX 1: idx_report_lot ON spot_report(lotId)
+---------------------------------------------------------------------
+
+Creation statement:
+    CREATE INDEX idx_report_lot ON spot_report(lotId);
+
+Query affected (Most Available Lots -- GET /analytics):
+    SELECT l.name, sr.packedLevel, sr.hasOpenSpots, l.paymentType,
+           DATE_FORMAT(sr.reportedAt, '%b %d %h:%i %p') AS lastReported
+    FROM lot l
+    JOIN spot_report sr ON l.lotId = sr.lotId
+    WHERE sr.reportedAt = (
+        SELECT MAX(sr2.reportedAt) FROM spot_report sr2 WHERE sr2.lotId = l.lotId
+    )
+    ORDER BY CASE sr.packedLevel
+        WHEN 'Empty'    THEN 1
+        WHEN 'Light'    THEN 2
+        WHEN 'Moderate' THEN 3
+        WHEN 'Busy'     THEN 4
+        WHEN 'Full'     THEN 5
+    END ASC
+    LIMIT 10;
+
+Why this index helps:
+    The JOIN and correlated subquery both filter spot_report by lotId.
+    Without the index, each lookup requires a full table scan of spot_report.
+    The index lets MySQL seek directly to rows matching a given lotId.
+
+Before index:  [fill in after seeding -- e.g. 0.045 sec]
+After index:   [fill in after seeding -- e.g. 0.008 sec]
+
+
+---------------------------------------------------------------------
+INDEX 2: idx_report_time ON spot_report(reportedAt)
+---------------------------------------------------------------------
+
+Creation statement:
+    CREATE INDEX idx_report_time ON spot_report(reportedAt);
+
+Query affected (Busiest Hours -- GET /analytics):
+    SELECT HOUR(reportedAt) AS hour, COUNT(*) AS reportCount
+    FROM spot_report
+    WHERE packedLevel IN ('Busy', 'Full')
+    GROUP BY HOUR(reportedAt)
+    ORDER BY reportCount DESC
+    LIMIT 8;
+
+Why this index helps:
+    The query scans reportedAt for every row to extract the hour component
+    and to satisfy the GROUP BY. The index allows MySQL to traverse
+    reportedAt values in order, reducing random I/O on large datasets.
+
+Before index:  [fill in after seeding -- e.g. 0.038 sec]
+After index:   [fill in after seeding -- e.g. 0.011 sec]

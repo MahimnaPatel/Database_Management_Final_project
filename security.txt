@@ -1,0 +1,46 @@
+UGA Parking Spot Tracker -- Password Security
+=============================================
+
+APPROACH: BCrypt via Spring Security Crypto
+--------------------------------------------
+User passwords are never stored in plaintext. When a user registers,
+the password is hashed using BCrypt before being written to the database.
+When a user logs in, the submitted password is verified against the
+stored hash without ever decrypting it.
+
+IMPLEMENTATION
+--------------
+Library: spring-security-crypto (included in the project 2 starter code,
+no additional permission required).
+
+Class used: org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
+
+Encoding (registration):
+    BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    String hash = encoder.encode(plaintextPassword);
+    // hash is stored in user.password column (VARCHAR 255)
+
+Verification (login):
+    boolean match = encoder.matches(plaintextPassword, storedHash);
+    // returns true only if the password matches the hash
+
+See: src/main/java/uga/menik/csx370/services/UserService.java
+     -- registerUser() method for encoding
+     -- authenticate() method for verification
+
+WHY BCRYPT IS SECURE
+---------------------
+1. One-way: BCrypt hashes cannot be reversed to recover the plaintext.
+2. Salted: Each hash includes a unique random salt, so two users with
+   the same password will have different hashes. This prevents
+   rainbow table attacks.
+3. Adaptive cost: The work factor (default 10 in this project) can be
+   increased over time to keep up with faster hardware.
+4. Industry standard: BCrypt is widely recommended for password storage
+   and is used by default in Spring Security.
+
+PASSWORD COLUMN
+---------------
+The user.password column is VARCHAR(255), which comfortably holds the
+60-character BCrypt hash format:
+    $2a$10$<22-char salt><31-char hash>
