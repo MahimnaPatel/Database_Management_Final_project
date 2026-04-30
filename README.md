@@ -1,3 +1,6 @@
-# Database_Management_Final_project
+# UGA Parking Spot Tracker
 
-Nothing in here yet, Mo you can divy up tasks here 
+A crowd-sourced parking availability app for the University of Georgia campus.
+Students log in and report how packed a parking lot is and whether any open spots
+are visible, giving other students real-time lot status before they drive over.
+Lots covered are UGA-affiliated lots that accept ParkMobile or are free after 5 PM.

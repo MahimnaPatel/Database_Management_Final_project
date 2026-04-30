@@ -1,0 +1,32 @@
+UGA Parking Spot Tracker -- Data Sources
+=========================================
+
+PARKING LOTS (lot table -- 15 rows)
+-------------------------------------
+Lot names, addresses, and capacity figures were sourced from the
+University of Georgia Parking Services website (parking.uga.edu)
+and UGA's publicly available campus parking map. Payment type
+(ParkMobile, Free, or Free_After_5PM) was determined based on
+UGA Parking Services posted rules for each lot. Latitude and
+longitude coordinates were approximated using Google Maps for
+each lot's physical location on the UGA Athens campus.
+
+SPOT REPORTS (spot_report table -- 1200+ rows)
+------------------------------------------------
+No real-world dataset was available for crowd-sourced parking
+status reports, so this data was synthetically generated using
+a MySQL stored procedure included in data.sql. The procedure
+generates 1200 rows by randomly assigning:
+  - userId:      uniform random across the 20 demo users
+  - lotId:       uniform random across the 15 UGA lots
+  - packedLevel: uniform random across Empty/Light/Moderate/Busy/Full
+  - hasOpenSpots: set to TRUE when packedLevel is Empty, Light, or
+                  Moderate; FALSE when Busy or Full (realistic correlation)
+  - reportedAt:  random timestamp spread across the past 60 days
+                 at any hour of the day
+
+USERS (user table -- 20 rows)
+-------------------------------
+Demo user accounts were created synthetically with generic
+usernames (UgaUser1 through UgaUser20) and realistic first/last
+names. Passwords are stored as BCrypt hashes (see security.txt).
