@@ -123,11 +123,29 @@ public class LotService {
     }
 
     public boolean deleteLot(int lotId) throws SQLException {
-        final String sql = "DELETE FROM lot WHERE lotId = ?";
-        try (Connection conn = dataSource.getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setInt(1, lotId);
-            return pstmt.executeUpdate() > 0;
+        final String deleteReportsSql = "DELETE FROM spot_report WHERE lotId = ?";
+        final String deleteLotSql = "DELETE FROM lot WHERE lotId = ?";
+
+        try (Connection conn = dataSource.getConnection()) {
+            boolean previousAutoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+
+            try (PreparedStatement deleteReports = conn.prepareStatement(deleteReportsSql);
+                 PreparedStatement deleteLot = conn.prepareStatement(deleteLotSql)) {
+                deleteReports.setInt(1, lotId);
+                deleteReports.executeUpdate();
+
+                deleteLot.setInt(1, lotId);
+                boolean deleted = deleteLot.executeUpdate() > 0;
+
+                conn.commit();
+                return deleted;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(previousAutoCommit);
+            }
         }
     }
 

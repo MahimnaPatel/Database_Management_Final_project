@@ -67,6 +67,6 @@ public class Lot{
     }
 
     public String getLastReported() {
-        return lastReported;
+    return lastReported == null ? "No reports yet" : lastReported;
     }
 }
