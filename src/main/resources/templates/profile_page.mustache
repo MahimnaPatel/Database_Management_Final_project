@@ -1,0 +1,52 @@
+{{> fragments/html_header}}
+{{> fragments/top_bar}}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0">Edit Profile</h3>
+                </div>
+                <div class="card-body">
+                    
+                    {{#errorMessage}}
+                        {{> fragments/error_message}}
+                    {{/errorMessage}}
+
+                    {{#successMessage}}
+                        <div class="alert alert-success">{{successMessage}}</div>
+                    {{/successMessage}}
+
+                    <form action="/profile" method="post">
+                        <!-- Username is shown but read-only as it's a UNIQUE identifier -->
+                        <div class="mb-3">
+                            <label class="form-label">Username</label>
+                            <input type="text" class="form-control" value="{{user.username}}" disabled>
+                            <div class="form-text">Usernames cannot be changed.</div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="firstName" class="form-label">First Name</label>
+                            <input type="text" class="form-control" id="firstName" name="firstName" 
+                                   value="{{user.firstName}}" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="lastName" class="form-label">Last Name</label>
+                            <input type="text" class="form-control" id="lastName" name="lastName" 
+                                   value="{{user.lastName}}" required>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success">Update Profile</button>
+                            <a href="/lots" class="btn btn-outline-secondary">Back to Lots</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{{> fragments/footer}}
