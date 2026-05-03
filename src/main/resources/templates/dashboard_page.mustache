@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+<body>
+
+{{> fragments/top_bar}}
+
+<div class="container">
+    <h2 class="content-center">My Dashboard</h2>
+    {{> fragments/error_message}}
+
+    <!-- Avg Packed Level Trend (last 7 days) -->
+    <div class="card">
+        <h3>Avg Packed Level &mdash; Favorited Lots (Last 7 Days)</h3>
+        {{#packedTrend}}
+        <div class="analytics-row">
+            <span class="analytics-label">{{dateLabel}}</span>
+            <span class="analytics-bar-wrap">
+                <span class="badge badge-{{avgLevelLabel}}">{{avgLevelLabel}}</span>
+                <span class="analytics-count" style="margin-left:8pt;">avg {{avgLevelStr}} / 5</span>
+            </span>
+        </div>
+        {{/packedTrend}}
+        {{^packedTrend}}
+        <div class="no-content-message content-center">No data for the last 7 days.</div>
+        {{/packedTrend}}
+    </div>
+
+    <!-- Recent Activity -->
+    <div class="card">
+        <h3>Recent Activity on Favorited Lots</h3>
+        <table class="analytics-table">
+            <thead>
+                <tr>
+                    <th>Lot</th>
+                    <th>Status</th>
+                    <th>Open Spots</th>
+                    <th>Reporter</th>
+                    <th>When</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#recentActivity}}
+            <tr>
+                <td>{{lotName}}</td>
+                <td><span class="badge badge-{{packedLevel}}">{{packedLevel}}</span></td>
+                <td>
+                    {{#hasOpenSpots}}Yes{{/hasOpenSpots}}
+                    {{^hasOpenSpots}}No{{/hasOpenSpots}}
+                </td>
+                <td>@{{reporter}}</td>
+                <td>{{reportedAt}}</td>
+            </tr>
+            {{/recentActivity}}
+            {{^recentActivity}}
+            <tr><td colspan="5">No recent activity on your favorite lots.</td></tr>
+            {{/recentActivity}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{{> fragments/footer}}
+</body>
+</html>

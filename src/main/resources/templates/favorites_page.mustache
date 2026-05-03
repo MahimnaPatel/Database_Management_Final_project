@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+<body>
+
+{{> fragments/top_bar}}
+
+<div class="container">
+    <h2 class="content-center">My Favorite Lots</h2>
+    {{> fragments/error_message}}
+
+    {{#favoriteLots}}
+    <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+            <div>
+                <strong>{{lotName}}</strong><br>
+                <span style="color:#657786; font-size:10pt;">{{address}}</span><br>
+                <span style="font-size:10pt;">Payment: {{paymentType}}</span>
+            </div>
+            <div style="text-align:right;">
+                {{#packedLevel}}
+                <span class="badge badge-{{packedLevel}}">{{packedLevel}}</span><br>
+                <span style="font-size:9pt; color:#657786;">
+                    Open spots:
+                    {{#hasOpenSpots}}Yes{{/hasOpenSpots}}
+                    {{^hasOpenSpots}}No{{/hasOpenSpots}}
+                </span><br>
+                <span style="font-size:9pt; color:#657786;">Last: {{lastReported}}</span>
+                {{/packedLevel}}
+                {{^packedLevel}}
+                <span style="font-size:9pt; color:#657786;">No reports yet</span>
+                {{/packedLevel}}
+            </div>
+        </div>
+        <form method="post" action="/favorites/remove" style="margin-top:8pt;">
+            <input type="hidden" name="lotId" value="{{lotId}}">
+            <input type="hidden" name="redirect" value="/favorites">
+            <button type="submit" class="action-button" style="font-size:9pt; padding:4pt 12pt;">
+                &#9733; Remove
+            </button>
+        </form>
+    </div>
+    {{/favoriteLots}}
+
+    {{^favoriteLots}}
+    <div class="content-center">
+        <div class="no-content-message">You have no favorite lots yet.</div>
+    </div>
+    {{/favoriteLots}}
+</div>
+
+{{> fragments/footer}}
+</body>
+</html>
