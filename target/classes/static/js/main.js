@@ -1,1 +1,0 @@
-// UGA Parking Spot Tracker

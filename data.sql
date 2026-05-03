@@ -11,6 +11,7 @@ USE uga_parking;
 SET FOREIGN_KEY_CHECKS = 0;
 
 INSERT INTO user (username, password, firstName, lastName) VALUES
+('test',      '$2a$10$2OP0rVlZzBr0OEPcg3Wtb.W5ar0j5x9X2b9gx8cDUz.zUnS9zw4pe', 'John',    'Doe'),
 ('UgaUser1',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Bailey',   'Adams'),
 ('UgaUser2',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Marcus',   'Brown'),
 ('UgaUser3',  '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', 'Jordan',   'Carter'),
