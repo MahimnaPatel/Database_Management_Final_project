@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body>
+
+{{> fragments/top_bar}}
+
+<div class="container center-align narrow">
+    <h2>Report a Lot</h2>
+
+    {{#successMessage}}
+    <div class="content-center" style="color:#155724; margin: 12pt 0;">
+        {{successMessage}}
+    </div>
+    {{/successMessage}}
+
+    <form method="post" action="/report">
+
+        <select name="lotId" class="short-input full" required>
+            <option value="" disabled selected>-- Select a Lot --</option>
+            {{#lots}}
+            <option value="{{lotId}}">{{name}}</option>
+            {{/lots}}
+        </select>
+
+        <div style="text-align:left; margin-top:14pt;">
+            <p style="margin-bottom:6pt; font-weight:bold; color:#657786;">How packed is it?</p>
+            <label><input type="radio" name="packedLevel" value="Empty" required> Empty</label><br>
+            <label><input type="radio" name="packedLevel" value="Light"> Light</label><br>
+            <label><input type="radio" name="packedLevel" value="Moderate"> Moderate</label><br>
+            <label><input type="radio" name="packedLevel" value="Busy"> Busy</label><br>
+            <label><input type="radio" name="packedLevel" value="Full"> Full</label>
+        </div>
+
+        <div style="text-align:left; margin-top:14pt;">
+            <label>
+                <input type="checkbox" name="hasOpenSpots" value="true">
+                Open spots visibly available
+            </label>
+        </div>
+
+        <textarea name="notes" class="short-input full"
+                  style="margin-top:14pt; border-radius:4pt; resize:vertical;"
+                  rows="3" placeholder="Optional notes (e.g. 'Deck level 2 is open')"></textarea>
+
+        <button type="submit" class="action-button" style="margin-top:14pt;">Submit Report</button>
+
+    </form>
+</div>
+
+{{> fragments/footer}}
+
+</body>
+</html>

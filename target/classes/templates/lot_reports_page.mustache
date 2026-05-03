@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body>
+
+{{> fragments/top_bar}}
+
+<div class="container">
+
+    {{^errorMessage}}
+    <h2 class="content-center">{{lotName}} — Recent Reports</h2>
+
+    <div class="card">
+        <table class="analytics-table">
+            <thead>
+                <tr>
+                    <th>Reporter</th>
+                    <th>Status</th>
+                    <th>Open Spots</th>
+                    <th>Reported At</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{#reports}}
+                <tr>
+                    <td>@{{username}}</td>
+                    <td><span class="badge badge-{{packedLevel}}">{{packedLevel}}</span></td>
+                    <td>
+                        {{#hasOpenSpots}}Yes{{/hasOpenSpots}}
+                        {{^hasOpenSpots}}No{{/hasOpenSpots}}
+                    </td>
+                    <td>{{reportedAt}}</td>
+                    <td>{{notes}}</td>
+                </tr>
+            {{/reports}}
+            {{^reports}}
+            <tr><td colspan="5">No reports yet for this lot.</td></tr>
+            {{/reports}}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="content-center" style="margin-bottom: 24pt;">
+        <a href="/report" class="action-button" style="text-decoration:none;">Report This Lot</a>
+    </div>
+    {{/errorMessage}}
+
+</div>
+
+{{> fragments/footer}}
+
+</body>
+</html>

@@ -30,7 +30,40 @@ VALUES (?, ?, ?, ?);
 -- SPOT REPORTING (Person 3 -- /report, /lots/{id}/reports)
 -- -----------------------------------------------
 
--- [Person 3: add report insertion and report history queries here]
+-- Fetches all lot names and IDs for the report form dropdown.
+-- Simple scan of the lot table (15 rows), ordered alphabetically for UX.
+-- URL: GET /report
+SELECT lotId, name
+FROM lot
+ORDER BY name ASC;
+
+-- Inserts a new crowd-sourced spot report for a given lot.
+-- reportedAt defaults to CURRENT_TIMESTAMP per DDL (not set here).
+-- notes is NULL when the user leaves the textarea empty.
+-- URL: POST /report
+INSERT INTO spot_report (userId, lotId, packedLevel, hasOpenSpots, notes)
+VALUES (?, ?, ?, ?, ?);
+
+-- Returns the 50 most recent reports for a specific lot, newest first.
+-- JOIN with user to retrieve the reporter's username for display.
+-- DATE_FORMAT produces a human-readable timestamp matching the analytics style.
+-- Uses idx_report_lot index on lotId for efficient filtered scan.
+-- URL: GET /lots/{id}/reports
+SELECT u.username, sr.packedLevel, sr.hasOpenSpots,
+       DATE_FORMAT(CONVERT_TZ(sr.reportedAt, '+00:00', '-04:00'), '%b %d %h:%i %p') AS reportedAt,
+       sr.notes
+FROM spot_report sr
+JOIN user u ON sr.userId = u.userId
+WHERE sr.lotId = ?
+ORDER BY sr.reportedAt DESC
+LIMIT 50;
+
+-- Retrieves lot name for the report history page heading.
+-- Simple primary key lookup — uses clustered index.
+-- URL: GET /lots/{id}/reports
+SELECT name
+FROM lot
+WHERE lotId = ?;
 
 
 -- -----------------------------------------------
