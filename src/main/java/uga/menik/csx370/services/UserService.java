@@ -10,26 +10,26 @@ import javax.sql.DataSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.annotation.SessionScope;
 
+import jakarta.servlet.http.HttpSession;
 import uga.menik.csx370.models.User;
 
 @Service
-@SessionScope
 public class UserService {
 
     private final DataSource dataSource;
     private final BCryptPasswordEncoder passwordEncoder;
-    private User loggedInUser = null;
+    private final HttpSession httpSession;
+    private static final String SESSION_USER_KEY = "loggedInUser";
 
     @Autowired
-    public UserService(DataSource dataSource) {
+    public UserService(DataSource dataSource, HttpSession httpSession) {
         this.dataSource = dataSource;
         this.passwordEncoder = new BCryptPasswordEncoder();
+        this.httpSession = httpSession;
     }
 
     public boolean authenticate(String username, String password) throws SQLException {
-        // Updated to common SQL naming convention: user_id
         final String sql = "SELECT * FROM user WHERE username = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -39,13 +39,13 @@ public class UserService {
                     String storedHash = rs.getString("password");
                     boolean match = passwordEncoder.matches(password, storedHash);
                     if (match) {
-                        // FIX: use rs.getInt for the ID to match the User model
-                        loggedInUser = new User(
+                        User loggedInUser = new User(
                             rs.getInt("userId"), 
                             rs.getString("username"),
                             rs.getString("firstName"),
                             rs.getString("lastName")
                         );
+                        httpSession.setAttribute(SESSION_USER_KEY, loggedInUser);
                     }
                     return match;
                 }
@@ -54,9 +54,7 @@ public class UserService {
         return false;
     }
 
-    // Update Profile logic
     public boolean updateProfile(int userId, String firstName, String lastName) throws SQLException {
-        // Ensure the WHERE clause uses the correct column name (user_id)
         final String sql = "UPDATE user SET firstName = ?, lastName = ? WHERE userId = ?";
         try (Connection conn = dataSource.getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -66,24 +64,28 @@ public class UserService {
             
             boolean success = pstmt.executeUpdate() > 0;
             
-            if (success && loggedInUser != null && loggedInUser.getUserId() == userId) {
-                loggedInUser.setFirstName(firstName);
-                loggedInUser.setLastName(lastName);
+            if (success) {
+                User loggedInUser = getLoggedInUser();
+                if (loggedInUser != null && loggedInUser.getUserId() == userId) {
+                    loggedInUser.setFirstName(firstName);
+                    loggedInUser.setLastName(lastName);
+                    httpSession.setAttribute(SESSION_USER_KEY, loggedInUser);
+                }
             }
             return success;
         }
     }
 
     public void unAuthenticate() {
-        loggedInUser = null;
+        httpSession.removeAttribute(SESSION_USER_KEY);
     }
 
     public boolean isAuthenticated() {
-        return loggedInUser != null;
+        return getLoggedInUser() != null;
     }
 
     public User getLoggedInUser() {
-        return loggedInUser;
+        return (User) httpSession.getAttribute(SESSION_USER_KEY);
     }
 
     public boolean registerUser(String username, String password, String firstName, String lastName)

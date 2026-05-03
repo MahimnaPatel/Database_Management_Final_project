@@ -5,8 +5,7 @@ Group Name: [YOUR GROUP NAME]
 TEAM MEMBERS
 -------------
 [Person 1 Name]
-[Person 2 Name]
-[Person 3 Name]
+Mahimna Patel
 [Person 4 Name]
 Mohammad Khan
 
