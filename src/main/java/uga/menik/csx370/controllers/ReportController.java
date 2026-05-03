@@ -49,7 +49,7 @@ public class ReportController {
             @RequestParam(name = "hasOpenSpots", defaultValue = "false") boolean hasOpenSpots,
             @RequestParam(name = "notes", defaultValue = "") String notes) {
         try {
-            int userId = Integer.parseInt(userService.getLoggedInUser().getUserId());
+            int userId = userService.getLoggedInUser().getUserId();
             reportService.submitReport(userId, lotId, packedLevel, hasOpenSpots, notes);
             return "redirect:/lots/" + lotId + "/reports";
         } catch (Exception e) {
