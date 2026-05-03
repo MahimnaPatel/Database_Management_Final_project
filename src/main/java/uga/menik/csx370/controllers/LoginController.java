@@ -48,4 +48,11 @@ public class LoginController {
             return "redirect:/login?error=" + msg;
         }
     }
+
+    // Simple addition to allow a clean logout from the Navbar/Footer
+    @GetMapping("/logout")
+    public String logout() {
+        userService.unAuthenticate();
+        return "redirect:/login";
+    }
 }

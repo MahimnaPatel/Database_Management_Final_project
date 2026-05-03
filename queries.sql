@@ -18,6 +18,13 @@ VALUES (?, ?, ?, ?);
 
 -- [Person 1: add profile view/update queries here]
 
+-- Fetch user details to display on the profile management page.
+-- URL: GET /profile
+SELECT userId, username, firstName, lastName FROM user WHERE userId = ?;
+
+-- Update the first and last name of a registered user.
+-- URL: POST /profile
+UPDATE user SET firstName = ?, lastName = ? WHERE userId = ?;
 
 -- -----------------------------------------------
 -- PARKING LOTS (Person 2 -- /lots, /lots/{id})

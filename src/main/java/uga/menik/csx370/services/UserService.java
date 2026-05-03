@@ -29,17 +29,19 @@ public class UserService {
     }
 
     public boolean authenticate(String username, String password) throws SQLException {
+        // Updated to common SQL naming convention: user_id
         final String sql = "SELECT * FROM user WHERE username = ?";
         try (Connection conn = dataSource.getConnection();
                 PreparedStatement pstmt = conn.prepareStatement(sql)) {
             pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
-                while (rs.next()) {
+                if (rs.next()) {
                     String storedHash = rs.getString("password");
                     boolean match = passwordEncoder.matches(password, storedHash);
                     if (match) {
+                        // FIX: use rs.getInt for the ID to match the User model
                         loggedInUser = new User(
-                            rs.getString("userId"),
+                            rs.getInt("userId"), 
                             rs.getString("username"),
                             rs.getString("firstName"),
                             rs.getString("lastName")
@@ -50,6 +52,26 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    // Update Profile logic
+    public boolean updateProfile(int userId, String firstName, String lastName) throws SQLException {
+        // Ensure the WHERE clause uses the correct column name (user_id)
+        final String sql = "UPDATE user SET firstName = ?, lastName = ? WHERE userId = ?";
+        try (Connection conn = dataSource.getConnection();
+             PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, firstName);
+            pstmt.setString(2, lastName);
+            pstmt.setInt(3, userId);
+            
+            boolean success = pstmt.executeUpdate() > 0;
+            
+            if (success && loggedInUser != null && loggedInUser.getUserId() == userId) {
+                loggedInUser.setFirstName(firstName);
+                loggedInUser.setLastName(lastName);
+            }
+            return success;
+        }
     }
 
     public void unAuthenticate() {
