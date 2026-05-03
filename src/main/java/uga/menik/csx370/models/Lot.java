@@ -26,6 +26,12 @@ public class Lot{
         this.hasOpenSpots = hasOpenSpots;
         this.lastReported = lastReported;
     }
+
+    public Lot(int lotId, String name, String address, int totalCapacity, String paymentType,
+               double latitude, double longitude) {
+        this(lotId, name, address, totalCapacity, paymentType, latitude, longitude, null, false, null);
+    }
+
     public int getLotId(){
         return lotId;
     }
@@ -51,9 +57,15 @@ public class Lot{
     public String getPackedLevel() {
         return packedLevel;
     }
+
     public boolean hasOpenSpots() {
         return hasOpenSpots;
     }
+
+    public boolean isHasOpenSpots() {
+        return hasOpenSpots;
+    }
+
     public String getLastReported() {
         return lastReported;
     }

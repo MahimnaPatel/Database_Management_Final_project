@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+{{> fragments/html_header}}
+
+<body>
+
+{{> fragments/top_bar}}
+
+<div class="container">
+    <h2 class="content-center">Lot Details</h2>
+
+    {{> fragments/error_message}}
+
+    <div class="detail-card">
+        <h3>{{lot.name}}</h3>
+        <p><strong>Address:</strong> {{lot.address}}</p>
+        <p><strong>Capacity:</strong> {{lot.totalCapacity}}</p>
+        <p><strong>Payment Type:</strong> {{lot.paymentType}}</p>
+        <p><strong>Latitude:</strong> {{lot.latitude}}</p>
+        <p><strong>Longitude:</strong> {{lot.longitude}}</p>
+
+        <h4>Most Recent Crowd-Sourced Status</h4>
+        {{#lot.packedLevel}}
+            <p><strong>Packed Level:</strong> {{lot.packedLevel}}</p>
+            <p><strong>Open Spots:</strong> {{#lot.hasOpenSpots}}Yes{{/lot.hasOpenSpots}}{{^lot.hasOpenSpots}}No{{/lot.hasOpenSpots}}</p>
+            <p><strong>Reported At:</strong> {{lot.lastReported}}</p>
+        {{/lot.packedLevel}}
+        {{^lot.packedLevel}}
+            <p>No crowd-sourced reports available yet.</p>
+        {{/lot.packedLevel}}
+
+        <div class="button-row">
+            <a class="button-link" href="/lots/{{lot.lotId}}/edit">Edit</a>
+            <form method="post" action="/lots/{{lot.lotId}}/delete" class="inline-form">
+                <button type="submit">Delete</button>
+            </form>
+            <a class="button-link" href="/lots">Back to Lots</a>
+        </div>
+    </div>
+</div>
+
+{{> fragments/footer}}
+
+</body>
+</html>
