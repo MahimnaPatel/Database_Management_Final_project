@@ -18,17 +18,20 @@ import org.springframework.web.servlet.ModelAndView;
 
 import uga.menik.csx370.models.Lot;
 import uga.menik.csx370.services.LotService;
+import uga.menik.csx370.services.UserService;
 
 @Controller
 @RequestMapping("/lots")
 public class LotsController {
-
     private final LotService lotService;
+    private final UserService userService;
 
     @Autowired
-    public LotsController(LotService lotService) {
+    public LotsController(LotService lotService, UserService userService) {
         this.lotService = lotService;
+        this.userService = userService;
     }
+    
 
     @GetMapping
     public ModelAndView page(@RequestParam(name = "q", required = false) String query,
@@ -36,7 +39,8 @@ public class LotsController {
                              @RequestParam(name = "error", required = false) String error) {
         ModelAndView mv = new ModelAndView("lots_page");
         try {
-            List<Lot> lots = lotService.searchLots(query, paymentType);
+            int userId = userService.getLoggedInUser().getUserId();
+            List<Lot> lots = lotService.searchLots(query, paymentType, userId);
             mv.addObject("lots", lots);
             mv.addObject("q", query == null ? "" : query);
             mv.addObject("paymentType", paymentType == null ? "" : paymentType);
