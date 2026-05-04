@@ -2,16 +2,421 @@
 <html lang="en">
 {{> fragments/html_header}}
 
+<style>
+    :root {
+        --lots-bg: #f4f6f8;
+        --lots-surface: #ffffff;
+        --lots-text: #17202a;
+        --lots-muted: #667085;
+        --lots-border: #d9dee7;
+        --lots-header: #1f2937;
+        --lots-header-text: #ffffff;
+        --lots-blue: #2563eb;
+        --lots-blue-hover: #1d4ed8;
+        --lots-red: #dc2626;
+        --lots-red-hover: #b91c1c;
+        --lots-green-bg: #dcfce7;
+        --lots-green-text: #166534;
+        --lots-yellow-bg: #fef3c7;
+        --lots-yellow-text: #92400e;
+        --lots-red-bg: #fee2e2;
+        --lots-red-text: #991b1b;
+        --lots-gray-bg: #eef2f7;
+        --lots-gray-text: #475467;
+    }
+
+    body {
+        background: var(--lots-bg);
+    }
+
+    .lots-dashboard {
+        max-width: 1120px;
+        margin: 32px auto;
+        padding: 0 20px;
+    }
+
+    .lots-card {
+        background: var(--lots-surface);
+        border: 1px solid var(--lots-border);
+        border-radius: 8px;
+        box-shadow: 0 14px 35px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+    }
+
+    .lots-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        padding: 24px 28px 18px;
+        border-bottom: 1px solid var(--lots-border);
+    }
+
+    .lots-title {
+        margin: 0;
+        color: var(--lots-text);
+        font-size: 26px;
+        line-height: 1.2;
+        font-weight: 700;
+    }
+
+    .lots-subtitle {
+        margin: 6px 0 0;
+        color: var(--lots-muted);
+        font-size: 14px;
+    }
+
+    .lots-toolbar {
+        padding: 20px 28px;
+        border-bottom: 1px solid var(--lots-border);
+        background: #fbfcfe;
+    }
+
+    .search-filter-form {
+        display: flex;
+        align-items: end;
+        gap: 14px;
+        flex-wrap: wrap;
+        margin: 0;
+    }
+
+    .filter-field {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        min-width: 190px;
+        flex: 1 1 220px;
+    }
+
+    .filter-field label {
+        color: var(--lots-muted);
+        font-size: 13px;
+        font-weight: 700;
+    }
+
+    .filter-field input,
+    .filter-field select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid var(--lots-border);
+        border-radius: 6px;
+        background: #ffffff;
+        color: var(--lots-text);
+        font-size: 14px;
+        min-height: 42px;
+        padding: 10px 12px;
+        outline: none;
+        transition: border-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .filter-field input:focus,
+    .filter-field select:focus {
+        border-color: var(--lots-blue);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+    }
+
+    .toolbar-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .btn,
+    .button-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 6px;
+        color: #ffffff;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1;
+        min-height: 42px;
+        padding: 0 16px;
+        text-decoration: none;
+        transition: background-color 0.18s ease, transform 0.18s ease;
+        white-space: nowrap;
+    }
+
+    .btn:hover,
+    .button-link:hover {
+        transform: translateY(-1px);
+    }
+
+    .btn-primary,
+    .button-link {
+        background: var(--lots-blue);
+    }
+
+    .btn-primary:hover,
+    .button-link:hover {
+        background: var(--lots-blue-hover);
+        color: #ffffff;
+    }
+
+    .btn-edit {
+        background: var(--lots-blue);
+        min-height: 34px;
+        padding: 0 12px;
+    }
+
+    .btn-edit:hover {
+        background: var(--lots-blue-hover);
+        color: #ffffff;
+    }
+
+    .btn-delete {
+        background: var(--lots-red);
+        min-height: 34px;
+        padding: 0 12px;
+    }
+
+    .btn-delete:hover {
+        background: var(--lots-red-hover);
+    }
+
+    .table-wrap {
+        width: 100%;
+        overflow-x: auto;
+    }
+
+    .lots-table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 820px;
+    }
+
+    .lots-table th,
+    .lots-table td {
+        padding: 15px 18px;
+        text-align: left;
+        vertical-align: middle;
+        border-bottom: 1px solid var(--lots-border);
+    }
+
+    .lots-table th {
+        background: var(--lots-header);
+        color: var(--lots-header-text);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+    }
+
+    .lots-table td {
+        color: var(--lots-text);
+        font-size: 14px;
+        line-height: 1.45;
+    }
+
+    .lots-table tbody tr {
+        transition: background-color 0.18s ease;
+    }
+
+    .lots-table tbody tr:hover {
+        background: #f8fafc;
+    }
+
+    .lot-name-link {
+        color: var(--lots-blue);
+        font-weight: 700;
+        text-decoration: none;
+    }
+
+    .lot-name-link:hover {
+        color: var(--lots-blue-hover);
+        text-decoration: underline;
+    }
+
+    .capacity-cell {
+        font-weight: 700;
+    }
+
+    .status-badge {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        line-height: 1;
+        min-width: 76px;
+        padding: 7px 10px;
+        white-space: nowrap;
+    }
+
+    .badge-Empty {
+        background: var(--lots-green-bg);
+        color: var(--lots-green-text);
+    }
+
+    .badge-Moderate {
+        background: var(--lots-yellow-bg);
+        color: var(--lots-yellow-text);
+    }
+
+    .badge-Full {
+        background: var(--lots-red-bg);
+        color: var(--lots-red-text);
+    }
+
+    .badge-Light,
+    .badge-Busy,
+    .badge-none {
+        background: var(--lots-gray-bg);
+        color: var(--lots-gray-text);
+    }
+
+    .actions-cell {
+        width: 150px;
+    }
+
+    .action-group {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
+    .inline-form {
+        display: inline-flex;
+        margin: 0;
+    }
+
+    .empty-state {
+        padding: 34px 28px;
+        color: var(--lots-muted);
+        text-align: center;
+    }
+
+    .empty-state p {
+        margin: 0;
+        font-size: 15px;
+    }
+
+    @media (max-width: 720px) {
+        .lots-dashboard {
+            margin: 20px auto;
+            padding: 0 12px;
+        }
+
+        .lots-header {
+            align-items: flex-start;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .lots-toolbar {
+            padding: 18px 20px;
+        }
+
+        .search-filter-form,
+        .toolbar-actions {
+            align-items: stretch;
+            width: 100%;
+        }
+
+        .filter-field,
+        .toolbar-actions,
+        .btn,
+        .button-link {
+            width: 100%;
+        }
+
+        .lots-title {
+            font-size: 22px;
+        }
+    }
+</style>
+
 <body>
 
 {{> fragments/top_bar}}
 
-<div class="container">
-    <h2 class="content-center">UGA Parking Lots</h2>
-    <p class="content-center" style="color:#657786;">
-        Lot listings coming soon &mdash; check back after Person 2 implements this page.
-    </p>
-</div>
+<main class="lots-dashboard">
+    <section class="lots-card">
+        <div class="lots-header">
+            <div>
+                <h2 class="lots-title">UGA Parking Lots</h2>
+                <p class="lots-subtitle">Manage lot details, payment options, and the latest reported availability.</p>
+            </div>
+        </div>
+
+        <div class="lots-toolbar">
+            <form method="get" action="/lots" class="search-filter-form">
+                <div class="filter-field">
+                    <label for="q">Search</label>
+                    <input type="text" id="q" name="q" value="{{q}}" placeholder="Name or address" />
+                </div>
+
+                <div class="filter-field">
+                    <label for="paymentType">Payment Type</label>
+                    <select id="paymentType" name="paymentType">
+                        <option value="" {{^paymentType}}selected{{/paymentType}}>All</option>
+                        <option value="ParkMobile" {{#paymentType}}{{#isParkMobile}}selected{{/isParkMobile}}{{/paymentType}}>ParkMobile</option>
+                        <option value="Free" {{#paymentType}}{{#isFree}}selected{{/isFree}}{{/paymentType}}>Free</option>
+                        <option value="Free_After_5PM" {{#paymentType}}{{#isFreeAfter5PM}}selected{{/isFreeAfter5PM}}{{/paymentType}}>Free After 5 PM</option>
+                    </select>
+                </div>
+
+                <div class="toolbar-actions">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a class="button-link" href="/lots/add">Add New Lot</a>
+                </div>
+            </form>
+        </div>
+
+        {{> fragments/error_message}}
+
+        <div class="table-wrap">
+            <table class="lots-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Address</th>
+                        <th>Capacity</th>
+                        <th>Payment Type</th>
+                        <th>Status</th>
+                        <th>Last Report</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#lots}}
+                    <tr>
+                        <td><a class="lot-name-link" href="/lots/{{lotId}}">{{name}}</a></td>
+                        <td>{{address}}</td>
+                        <td class="capacity-cell">{{totalCapacity}}</td>
+                        <td>{{paymentType}}</td>
+                        <td>
+                            {{#packedLevel}}<span class="status-badge badge-{{packedLevel}}">{{packedLevel}}</span>{{/packedLevel}}
+                            {{^packedLevel}}<span class="status-badge badge-none">No reports yet</span>{{/packedLevel}}
+                        </td>
+                        <td>{{lastReported}}</td>
+                        <td class="actions-cell">
+                            <div class="action-group">
+                                <a class="btn btn-edit" href="/lots/{{lotId}}/edit">Edit</a>
+                                <form method="post" action="/lots/{{lotId}}/delete" class="inline-form">
+                                    <button type="submit" class="btn btn-delete">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                    {{/lots}}
+                </tbody>
+            </table>
+        </div>
+
+        {{^lots}}
+        <div class="empty-state">
+            <p>No lots found. Use the filter to broaden your search.</p>
+        </div>
+        {{/lots}}
+    </section>
+</main>
 
 {{> fragments/footer}}
 
