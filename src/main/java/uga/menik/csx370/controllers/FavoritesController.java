@@ -54,13 +54,13 @@ public class FavoritesController {
     @GetMapping("/dashboard")
     public ModelAndView dashboardPage(@RequestParam(name = "error", required = false) String error) {
         ModelAndView modelView = new ModelAndView("dashboard_page");
-        modelView.addObject("errorMessage", error);
 
         try {
             int userId = userService.getLoggedInUser().getUserId();
             modelView.addObject("recentActivity", favoritesService.getRecentActivity(userId));
             modelView.addObject("packedTrend", favoritesService.getAvgPackedTrend(userId));
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             modelView.addObject("errorMessage", "Failed to load dashboard. Please try again.");
         }
 

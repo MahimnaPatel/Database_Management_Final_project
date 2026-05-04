@@ -38,6 +38,11 @@ public class LotsController {
                              @RequestParam(name = "paymentType", required = false) String paymentType,
                              @RequestParam(name = "error", required = false) String error) {
         ModelAndView mv = new ModelAndView("lots_page");
+
+        var user = userService.getLoggedInUser();
+        if (user == null) {
+            return new ModelAndView("redirect:/login");
+        }
         try {
             int userId = userService.getLoggedInUser().getUserId();
             List<Lot> lots = lotService.searchLots(query, paymentType, userId);
