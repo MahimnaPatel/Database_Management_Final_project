@@ -4,10 +4,11 @@ Group Name: [YOUR GROUP NAME]
 
 TEAM MEMBERS
 -------------
-[Person 1 Name]
+Cole Greer
 Mahimna Patel
-[Person 4 Name]
+Aidan Nash
 Mohammad Khan
+Pavan Indukuri
 
 TECHNOLOGIES USED
 ------------------
