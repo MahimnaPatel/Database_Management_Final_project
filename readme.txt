@@ -4,7 +4,7 @@ Group Name: UGA Parking Spot Tracker
 
 TEAM MEMBERS
 -------------
-Aidan Nash 
+Aidan Nash
 Cole Greer
 Mahimna Patel
 Pavan Indukuri
