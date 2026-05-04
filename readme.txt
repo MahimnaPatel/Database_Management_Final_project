@@ -47,4 +47,4 @@ HOW TO RUN
 3. Run data.sql to seed all data (lots, users, 1200+ reports)
 4. From the project root, run: mvn spring-boot:run
 5. Open browser at: http://localhost:8080
-6. Register a new account at /register to log in
+6. Register a new account at /register or use test account to log in
