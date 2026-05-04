@@ -2,13 +2,14 @@ UGA Parking Spot Tracker
 ========================
 Group Name: UGA Parking Spot Tracker
 
-TEAM MEMBERS
--------------
-Aidan Nash
-Cole Greer
-Mahimna Patel
-Pavan Indukuri
-Mohammad Khan
+TEAM MEMBERS & CONTRIBUTIONS
+-----------------------------
+Aidan Nash      — Auth & user management: login, register, profile, session handling
+Cole Greer      — Favorites & dashboard: add/remove favorites, dashboard, aggregate queries
+Mahimna Patel   — Parking lots: lots listing/detail pages, admin CRUD, lot seed data
+Pavan Indukuri  — Spot reporting: report form, submission, report history, ER diagram & normalization
+Mohammad Khan   — Analytics, indexes & docs: analytics page, perf.txt, ddl.sql, queries.sql,
+                  security.txt, datasource.txt, readme.txt, 1200+ row data seed
 
 TECHNOLOGIES USED
 ------------------
@@ -34,8 +35,10 @@ JDBC URL:      jdbc:mysql://localhost:33306/uga_parking
 
 TEST ACCOUNTS
 --------------
-Register new accounts at /register after seeding the database.
-The app uses BCrypt (Spring Security BCryptPasswordEncoder, strength 10).
+Username: test       Password: password
+Username: UgaUser1   Password: password
+Username: UgaUser2   Password: password
+(All 20 seeded demo accounts use password: password)
 
 HOW TO RUN
 -----------
