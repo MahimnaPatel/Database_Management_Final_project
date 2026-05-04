@@ -86,7 +86,7 @@ public class FavoritesService {
     // Gets the 20 most recent reports for the user's favorite lots
     public List<RecentReport> getRecentActivity(int userId) throws SQLException {
         final String sql =
-            "SELECT l.name AS lotName, sr.packedLevel, sr.hasOpenSpots, u.username AS reporter, DATE_FORMAT(sr.reportedAT, '%b %d %h:%i %p') AS reportedAt " +
+            "SELECT l.name AS lotName, sr.packedLevel, sr.hasOpenSpots, u.username AS reporter, DATE_FORMAT(sr.reportedAt, '%b %d %h:%i %p') AS reportedAt " +
             "FROM spot_report sr " +
             "JOIN lot l ON sr.lotId = l.lotId " +
             "JOIN user u ON sr.userId = u.userId " +
@@ -118,7 +118,7 @@ public class FavoritesService {
     // Gets the average packed level for all of the user's favorited lots per day over the last 7 days
     public List<PackedTrend> getAvgPackedTrend(int userId) throws SQLException {
         final String sql =
-            "SELECT DATE_FORMAT(sr.reportedAt, '%b %d') AS dateLabel, AVG(CASE sr.packedLevel " +
+            "SELECT DATE_FORMAT(DATE(sr.reportedAt), '%b %d') AS dateLabel, AVG(CASE sr.packedLevel " +
             "    WHEN 'Empty'    THEN 1 " +
             "    WHEN 'Light'    THEN 2 " +
             "    WHEN 'Moderate' THEN 3 " +

@@ -33,7 +33,7 @@ public class LotService {
         List<Lot> results = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT l.lotId, l.name, l.address, l.totalCapacity, l.paymentType, l.latitude, l.longitude, ");
-        sql.append("sr.packedLevel, sr.hasOpenSpots, sr.reportedAt AS lastReported ");
+        sql.append("sr.packedLevel, sr.hasOpenSpots, sr.reportedAt AS lastReported, ");
         sql.append("IF(f.userId IS NOT NULL, TRUE, FALSE) AS isFavorited ");
         sql.append("FROM lot l ");
         sql.append("LEFT JOIN spot_report sr ON sr.reportId = (SELECT reportId FROM spot_report WHERE lotId = l.lotId ORDER BY reportedAt DESC LIMIT 1) ");
