@@ -13,6 +13,8 @@ public class Lot{
     private final boolean hasOpenSpots;
     private final String lastReported;
 
+    private boolean isFavorited;
+
     public Lot(int lotId, String name, String address, int totalCapacity, String paymentType,
                double latitude, double longitude, String packedLevel, boolean hasOpenSpots, String lastReported) {
         this.lotId = lotId;
@@ -68,5 +70,13 @@ public class Lot{
 
     public String getLastReported() {
     return lastReported == null ? "No reports yet" : lastReported;
+    }
+
+    public boolean isFavorited() {
+        return isFavorited;
+    }
+
+    public void setFavorited(boolean fav) {
+        this.isFavorited = fav;
     }
 }

@@ -178,6 +178,28 @@
         background: var(--lots-red-hover);
     }
 
+    .btn-fav-add {
+        background: #6b7280;
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 16px;
+    }
+
+    .btn-fav-add:hover {
+        background: #f59e0b;
+    }
+
+    .btn-fav-remove {
+        background: #f59e0b;
+        min-height: 34px;
+        padding: 0 10px;
+        font-size: 16px;
+    }
+
+    .btn-fav-remove:hover {
+        background: #d97706;
+    }
+
     .table-wrap {
         width: 100%;
         overflow-x: auto;
@@ -402,6 +424,20 @@
                                 <form method="post" action="/lots/{{lotId}}/delete" class="inline-form">
                                     <button type="submit" class="btn btn-delete">Delete</button>
                                 </form>
+                                {{#isFavorited}}
+                                <form method="post" action="/favorites/remove" class="inline-form">
+                                    <input type="hidden" name="lotId"    value="{{lotId}}">
+                                    <input type="hidden" name="redirect" value="/lots">
+                                    <button type="submit" class="btn btn-fav-remove" title="Remove Favorite">&#9733;</button>
+                                </form>
+                                {{/isFavorited}}
+                                {{^isFavorited}}
+                                <form method="post" action="/favorites/add" class="inline-form">
+                                    <input type="hidden" name="lotId"    value="{{lotId}}">
+                                    <input type="hidden" name="redirect" value="/lots">
+                                    <button type="submit" class="btn btn-fav-add" title="Add to Favorites">&#9734;</button>
+                                </form>
+                                {{/isFavorited}}
                             </div>
                         </td>
                     </tr>

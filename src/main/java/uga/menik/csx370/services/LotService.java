@@ -29,16 +29,18 @@ public class LotService {
         this.dataSource = dataSource;
     }
 
-    public List<Lot> searchLots(String query, String paymentType) throws SQLException {
+    public List<Lot> searchLots(String query, String paymentType, int userId) throws SQLException {
         List<Lot> results = new ArrayList<>();
         StringBuilder sql = new StringBuilder();
         sql.append("SELECT l.lotId, l.name, l.address, l.totalCapacity, l.paymentType, l.latitude, l.longitude, ");
         sql.append("sr.packedLevel, sr.hasOpenSpots, sr.reportedAt AS lastReported ");
         sql.append("FROM lot l ");
         sql.append("LEFT JOIN spot_report sr ON sr.reportId = (SELECT reportId FROM spot_report WHERE lotId = l.lotId ORDER BY reportedAt DESC LIMIT 1) ");
+        sql.append("LEFT JOIN favorite f ON f.lotId = l.lotId AND f.userId = ? ");
         sql.append("WHERE 1 = 1 ");
 
         List<Object> params = new ArrayList<>();
+        params.add(userId);
 
         if (query != null && !query.trim().isEmpty()) {
             sql.append("AND (l.name LIKE ? OR l.address LIKE ?) ");
@@ -62,7 +64,9 @@ public class LotService {
 
             try (ResultSet rs = pstmt.executeQuery()) {
                 while (rs.next()) {
-                    results.add(createLotFromResult(rs));
+                    Lot lot = createLotFromResult(rs);
+                    lot.setFavorited(rs.getBoolean("isFavorited"));
+                    results.add(lot);
                 }
             }
         }
