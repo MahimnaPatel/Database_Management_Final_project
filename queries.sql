@@ -30,7 +30,63 @@ UPDATE user SET firstName = ?, lastName = ? WHERE userId = ?;
 -- PARKING LOTS (Person 2 -- /lots, /lots/{id})
 -- -----------------------------------------------
 
--- [Person 2: add lot listing, lot detail, and admin CRUD queries here]
+-- Displays all parking lots on the main lots page, including the most recent
+-- crowd-sourced report for each lot and whether the logged-in user favorited it.
+-- Optional filters search by name/address and payment type.
+-- The last two WHERE conditions are added only when the user enters a
+-- search value or chooses a payment type filter.
+-- URL: GET /lots
+SELECT l.lotId, l.name, l.address, l.totalCapacity, l.paymentType, l.latitude, l.longitude,
+       sr.packedLevel, sr.hasOpenSpots, sr.reportedAt AS lastReported,
+       IF(f.userId IS NOT NULL, TRUE, FALSE) AS isFavorited
+FROM lot l
+LEFT JOIN spot_report sr ON sr.reportId = (
+    SELECT reportId
+    FROM spot_report
+    WHERE lotId = l.lotId
+    ORDER BY reportedAt DESC
+    LIMIT 1
+)
+LEFT JOIN favorite f ON f.lotId = l.lotId AND f.userId = ?
+WHERE 1 = 1
+  AND (l.name LIKE ? OR l.address LIKE ?)
+  AND l.paymentType = ?
+ORDER BY l.name ASC;
+
+-- Fetches one parking lot and its latest report for the lot detail page.
+-- URL: GET /lots/{lotId}
+SELECT l.lotId, l.name, l.address, l.totalCapacity, l.paymentType, l.latitude, l.longitude,
+       sr.packedLevel, sr.hasOpenSpots, sr.reportedAt AS lastReported
+FROM lot l
+LEFT JOIN spot_report sr ON sr.reportId = (
+    SELECT reportId
+    FROM spot_report
+    WHERE lotId = l.lotId
+    ORDER BY reportedAt DESC
+    LIMIT 1
+)
+WHERE l.lotId = ?;
+
+-- Inserts a new parking lot from the add lot form.
+-- URL: POST /lots/add
+INSERT INTO lot (name, address, totalCapacity, paymentType, latitude, longitude)
+VALUES (?, ?, ?, ?, ?, ?);
+
+-- Updates an existing parking lot from the edit lot form.
+-- URL: POST /lots/{lotId}/edit
+UPDATE lot
+SET name = ?, address = ?, totalCapacity = ?, paymentType = ?, latitude = ?, longitude = ?
+WHERE lotId = ?;
+
+-- Deletes all reports connected to a lot before removing the lot itself.
+-- URL: POST /lots/{lotId}/delete
+DELETE FROM spot_report
+WHERE lotId = ?;
+
+-- Deletes the selected parking lot after its dependent reports are removed.
+-- URL: POST /lots/{lotId}/delete
+DELETE FROM lot
+WHERE lotId = ?;
 
 
 -- -----------------------------------------------
