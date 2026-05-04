@@ -89,7 +89,7 @@ public class FavoritesService {
             "SELECT l.name AS lotName, sr.packedLevel, sr.hasOpenSpots, u.username AS reporter, DATE_FORMAT(sr.reportedAt, '%b %d %h:%i %p') AS reportedAt " +
             "FROM spot_report sr " +
             "JOIN lot l ON sr.lotId = l.lotId " +
-            "JOIN user u ON sr.userId = u.userId " +
+            "JOIN `user` u ON sr.userId = u.userId " +
             "JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ? " +
             "ORDER BY sr.reportedAt DESC " +
             "LIMIT 20";
@@ -118,17 +118,23 @@ public class FavoritesService {
     // Gets the average packed level for all of the user's favorited lots per day over the last 7 days
     public List<PackedTrend> getAvgPackedTrend(int userId) throws SQLException {
         final String sql =
-            "SELECT DATE_FORMAT(DATE(sr.reportedAt), '%b %d') AS dateLabel, AVG(CASE sr.packedLevel " +
-            "    WHEN 'Empty'    THEN 1 " +
-            "    WHEN 'Light'    THEN 2 " +
-            "    WHEN 'Moderate' THEN 3 " +
-            "    WHEN 'Busy'     THEN 4 " +
-            "    WHEN 'Full'     THEN 5 END) AS avgLevel " +
-            "FROM spot_report sr " +
-            "JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ? " +
-            "WHERE sr.reportedAt >= NOW() - INTERVAL 7 DAY " +
-            "GROUP BY DATE(sr.reportedAt) " +
-            "ORDER BY DATE(sr.reportedAt) ASC";
+            "SELECT reportDate, dateLabel, AVG(numericLevel) AS avgLevel " +
+            "FROM ( " +
+            "    SELECT DATE(sr.reportedAt) AS reportDate, " +
+            "           DATE_FORMAT(DATE(sr.reportedAt), '%b %d') AS dateLabel, " +
+            "           CASE sr.packedLevel " +
+            "               WHEN 'Empty'    THEN 1 " +
+            "               WHEN 'Light'    THEN 2 " +
+            "               WHEN 'Moderate' THEN 3 " +
+            "               WHEN 'Busy'     THEN 4 " +
+            "               WHEN 'Full'     THEN 5 " +
+            "           END AS numericLevel " +
+            "    FROM spot_report sr " +
+            "    JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ? " +
+            "    WHERE sr.reportedAt >= NOW() - INTERVAL 7 DAY " +
+            ") sub " +
+            "GROUP BY reportDate, dateLabel " +
+            "ORDER BY reportDate ASC";
 
         List<PackedTrend> results = new ArrayList<>();
 

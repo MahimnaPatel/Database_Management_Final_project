@@ -36,4 +36,5 @@ public class PackedTrend {
     public String getAvgLevelString() {
         return String.format("%.2f", avgLevel);
     }
+
 }
