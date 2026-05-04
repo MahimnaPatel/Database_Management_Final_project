@@ -1,6 +1,6 @@
 UGA Parking Spot Tracker
 ========================
-Group Name: [YOUR GROUP NAME]
+Group Name: UGA Parking Spot Tracker
 
 TEAM MEMBERS
 -------------
