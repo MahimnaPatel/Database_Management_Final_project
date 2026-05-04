@@ -77,8 +77,62 @@ WHERE lotId = ?;
 -- FAVORITES & DASHBOARD (Person 4 -- /favorites)
 -- -----------------------------------------------
 
--- [Person 4: add favorite add/remove and dashboard queries here]
+-- Add a lot to favorites tab.
+-- URL: POST /favorites/add
+INSERT IGNORE INTO favorite (userId, lotId) VALUES (?, ?);
 
+-- Remove a lot from favorites tab.
+-- URL: POST /favorites/remove
+DELETE FROM favorite WHERE userId = ? AND lotId = ?;
+
+-- Get all favorited lots with most recent packed status.
+-- LEFT JOIN to include lots with zero reports.
+-- URL: GET /favorites
+SELECT l.lotId, l.name, l.address, l.paymentType,
+       sr.packedLevel, sr.hasOpenSpots,
+       DATE_FORMAT(sr.reportedAt, '%b %d %h:%i %p') AS lastReported
+FROM favorite f
+JOIN lot l ON f.lotId = l.lotId
+LEFT JOIN spot_report sr ON sr.lotId = l.lotId
+  AND sr.reportedAt = (
+      SELECT MAX(sr2.reportedAt) FROM spot_report sr2 WHERE sr2.lotId = l.lotId
+  )
+WHERE f.userId = ?
+ORDER BY l.name ASC;
+
+-- Fetch the 20 most recent spot reports among the user's favorited lots.
+-- JOIN filters to include only user's favorited lots.
+-- URL: GET /dashboard
+SELECT l.name AS lotName, sr.packedLevel, sr.hasOpenSpots,
+       u.username AS reporter,
+       DATE_FORMAT(sr.reportedAt, '%b %d %h:%i %p') AS reportedAt
+FROM spot_report sr
+JOIN lot l ON sr.lotId = l.lotId
+JOIN user u ON sr.userId = u.userId
+JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ?
+ORDER BY sr.reportedAt DESC
+LIMIT 20;
+
+-- Aggregate query: aerage packed level per lot per day across all the user's favorited lots.
+-- Aggregation: AVG with CASE expression grouped by date.
+-- URL: GET /dashboard
+SELECT reportDate, dateLabel, AVG(numericLevel) AS avgLevel
+FROM (
+    SELECT DATE(sr.reportedAt) AS reportDate,
+           DATE_FORMAT(DATE(sr.reportedAt), '%b %d') AS dateLabel,
+           CASE sr.packedLevel
+               WHEN 'Empty'    THEN 1
+               WHEN 'Light'    THEN 2
+               WHEN 'Moderate' THEN 3
+               WHEN 'Busy'     THEN 4
+               WHEN 'Full'     THEN 5
+           END AS numericLevel
+    FROM spot_report sr
+    JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ?
+    WHERE sr.reportedAt >= NOW() - INTERVAL 7 DAY
+) sub
+GROUP BY reportDate, dateLabel
+ORDER BY reportDate ASC;
 
 -- -----------------------------------------------
 -- ANALYTICS (Person 5 -- /analytics)
