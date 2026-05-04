@@ -39,8 +39,8 @@ Why this index helps:
     Without the index, each lookup requires a full table scan of spot_report.
     The index lets MySQL seek directly to rows matching a given lotId.
 
-Before index:  [fill in after seeding -- e.g. 0.045 sec]
-After index:   [fill in after seeding -- e.g. 0.008 sec]
+Before index:  0.02913 sec
+After index:   0.00595 sec
 
 
 ---------------------------------------------------------------------
@@ -63,5 +63,8 @@ Why this index helps:
     and to satisfy the GROUP BY. The index allows MySQL to traverse
     reportedAt values in order, reducing random I/O on large datasets.
 
-Before index:  [fill in after seeding -- e.g. 0.038 sec]
-After index:   [fill in after seeding -- e.g. 0.011 sec]
+Before index:  0.00101 sec
+After index:   0.00412 sec
+
+Note: At 1200 rows the index overhead slightly exceeds the lookup savings.
+The index benefit becomes significant at larger data volumes.
