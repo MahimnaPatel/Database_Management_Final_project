@@ -33,15 +33,8 @@ JDBC URL:      jdbc:mysql://localhost:33306/uga_parking
 
 TEST ACCOUNTS
 --------------
-All demo accounts use password: password
-
-Username: UgaUser1  | Password: password
-Username: UgaUser2  | Password: password
-Username: UgaUser3  | Password: password
-
-Note: If login fails, register these accounts manually at /register.
-The app uses BCrypt -- the hash in data.sql was generated with
-Spring Security BCryptPasswordEncoder (strength 10).
+Register new accounts at /register after seeding the database.
+The app uses BCrypt (Spring Security BCryptPasswordEncoder, strength 10).
 
 HOW TO RUN
 -----------
@@ -50,4 +43,4 @@ HOW TO RUN
 3. Run data.sql to seed all data (lots, users, 1200+ reports)
 4. From the project root, run: mvn spring-boot:run
 5. Open browser at: http://localhost:8080
-6. Log in with any test account above
+6. Register a new account at /register to log in

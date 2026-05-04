@@ -123,8 +123,7 @@ public class FavoritesService {
             "    WHEN 'Light'    THEN 2 " +
             "    WHEN 'Moderate' THEN 3 " +
             "    WHEN 'Busy'     THEN 4 " +
-            "    WHEN 'Full'     THEN 5 " +
-            "    END) AS avgLevel " +
+            "    WHEN 'Full'     THEN 5 END) AS avgLevel " +
             "FROM spot_report sr " +
             "JOIN favorite f ON f.lotId = sr.lotId AND f.userId = ? " +
             "WHERE sr.reportedAt >= NOW() - INTERVAL 7 DAY " +
